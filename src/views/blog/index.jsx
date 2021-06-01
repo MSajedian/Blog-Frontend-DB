@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import { Container, Image } from "react-bootstrap";
 import { withRouter } from "react-router";
 import BlogAuthor from "../../components/blog/blog-author";
-// import posts from "../../data/posts.json";
 import "./styles.css";
+
 class Blog extends Component {
   state = {
     posts: [],
