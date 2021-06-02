@@ -3,36 +3,43 @@ import { Container, Image } from "react-bootstrap";
 import { withRouter } from "react-router";
 import BlogAuthor from "../../components/blog/blog-author";
 import "./styles.css";
+import uniqid from "uniqid";
 
 class Blog extends Component {
   state = {
     posts: [],
+    comments: [],
     blog: {},
     loading: true,
   };
 
-    componentDidMount = async () => {
+  componentDidMount = async () => {
     // const apiUrl = process.env.REACT_APP_BACKEND_API_URL
-    const BackendAPIURL="http://localhost:3001"
-    const resp = await fetch(`${BackendAPIURL}/blogposts`
+    const BackendAPIURL = "http://localhost:3001"
+    const blogpostsResp = await fetch(`${BackendAPIURL}/blogposts`)
     // ,{
     //   headers:{
     //     Origin: process.env.REACT_APP_FRONTEND_API_URL
     //   }
     // }
-    )
-    console.log(resp)
-    const blogposts = await resp.json()
+    // console.log(blogpostsResp)
+    const blogposts = await blogpostsResp.json()
     this.setState({ posts: blogposts })
+
 
     const { id } = this.props.match.params;
     console.log(this.state.posts);
     const blog = this.state.posts.find((post) => post._id.toString() === id);
     if (blog) {
       this.setState({ blog, loading: false });
+      // this.setState({ comments:blog.comments, loading: false });
     } else {
       this.props.history.push("/404");
     }
+
+    // const commentsResp = await fetch(`${BackendAPIURL}/blogposts`)
+    // const blogpostsComments = await commentsResp.json()
+    // this.setState({ comments: blogpostsComments })
   }
 
   render() {
@@ -57,6 +64,16 @@ class Blog extends Component {
             </div>
 
             <div dangerouslySetInnerHTML={{ __html: blog.content }}></div>
+            <hr />
+            <h2>Comments:</h2>
+            <div>
+              {blog.comments.map((comment) => (
+                <div md={4} style={{ marginBottom: 50 }} key={uniqid()}>
+                  <p>{comment.comment}</p>
+                  <p><strong>Rate:</strong> {comment.rate}</p>
+                </div>
+              ))}
+            </div>            
           </Container>
         </div>
       );
